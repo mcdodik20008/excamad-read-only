@@ -9,14 +9,8 @@
             <li
               class="mt-2"
               :key="item.processActivityToShow"
-              v-for="(item,index) in currentProcessActivityToShowArray"
+              v-for="item in currentProcessActivityToShowArray"
             >
-              <b-btn
-                v-if="checkButtons(index)"
-                @click="skipActivity(item)"
-                size="sm"
-                variant="outline-danger"
-              >Skip</b-btn>
               {{item.processActivityToShow}}
               <b>{{item.activityHimanaizedCreateDate}}</b>
             </li>
@@ -82,55 +76,11 @@ export default {
     this.loadData();
   },
   methods: {
-    checkButtons: function (index) {
-      if (index == 0) {
-        return true;
-      } else return false;
-    },
     updateDiagram() {
       this.digagramkey = this.digagramkey + 1;
       this.showDiagramAttirbutes = !this.showDiagramAttirbutes;
       this.loadHistory = !this.loadHistory;
 
-    },
-    skipActivity(item) {
-      var processInstanceIdsArray = [];
-      processInstanceIdsArray.push(this.processInstanceId);
-      var instructionsCancel = {};
-      instructionsCancel["type"] = "cancel";
-      instructionsCancel["activityId"] = item.processActivityToShow;
-      var instructionsStartAfter = {};
-      instructionsStartAfter["type"] = "startAfterActivity";
-      instructionsStartAfter["activityId"] = item.processActivityToShow;
-      var instructions = [];
-      //===
-      instructions.push(instructionsStartAfter);
-      //===
-      this.$api()
-        .post("/modification/execute", {
-          processDefinitionId: this.processDefinition,
-          skipCustomListeners: true,
-          processInstanceIds: processInstanceIdsArray,
-          instructions: instructions
-        })
-        .then(() => {
-          instructions = [];
-          instructions.push(instructionsCancel);
-          //===
-          setTimeout(() => {
-            this.$api()
-              .post("/modification/execute", {
-                processDefinitionId: this.processDefinition,
-                skipCustomListeners: true,
-                processInstanceIds: processInstanceIdsArray,
-                instructions: instructions
-              })
-              .then(() => {
-                this.loadData();
-                this.digagramkey = this.digagramkey + 1;
-              });
-          }, 400);
-        });
     },
     async loadData() {
       await this.getProcessDefinitionById();
