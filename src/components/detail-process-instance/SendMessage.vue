@@ -8,7 +8,6 @@
           :options="messageList"
           class="mb-2 mr-sm-2 mb-sm-0"
         />
-        <b-button @click="sendMessage" variant="outline-danger">Send</b-button>
         <br>
       </b-form>
     </b-card>
@@ -102,31 +101,6 @@ export default {
         return [];
       }
     },
-    sendMessage() {
-      var sendObj = {
-        messageName: this.selectedMessage,
-        processInstanceId: this.processInstanceId,
-        resultEnabled: true
-      };
-      this.$api()
-        .post("/message", sendObj)
-        .then(response => {
-          this.$notify({
-            group: "foo",
-            title: "Sended!",
-            text: "Message" + this.selectedMessage + " sended" + response.data,
-            type: "success"
-          });
-        })
-        .catch(error => {
-          this.$notify({
-            group: "foo",
-            title: "Not sended!",
-            text: error,
-            type: "error"
-          });
-        });
-    }
   }
 };
 </script>

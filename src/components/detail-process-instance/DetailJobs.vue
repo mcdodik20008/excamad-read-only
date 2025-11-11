@@ -11,7 +11,6 @@
             <th>Suspended</th>
             <th>Exception</th>
             <th>Stacktrace</th>
-            <th>Execute</th>
           </tr>
         </thead>
         <tbody>
@@ -29,9 +28,6 @@
                 size="sm"
                 variant="link"
               >Stacktrace</b-btn>
-            </td>
-            <td>
-              <b-btn @click="executeJob(item.id)" size="sm" variant="outline-danger">Execute now</b-btn>
             </td>
           </tr>
         </tbody>
@@ -156,26 +152,6 @@ export default {
                 }
               }
             }
-          });
-        });
-    },
-    executeJob(jobId) {
-      this.$api()
-        .post("/job/" + jobId + "/execute")
-        .then(() => {
-          this.$notify({
-            group: "foo",
-            title: " Executed!",
-            text: jobId,
-            type: "success"
-          });
-        })
-        .catch(error => {
-          this.$notify({
-            group: "foo",
-            title: "Not executed!",
-            text: error,
-            type: "error"
           });
         });
     },

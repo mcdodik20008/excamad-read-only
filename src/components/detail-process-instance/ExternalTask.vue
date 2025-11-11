@@ -2,13 +2,6 @@
 <div>
     <h2> External task </h2>
     <v-client-table :data="externalTaskJobs" :columns="columns" :options="options">
-        <template slot="actions" slot-scope="{ row }">
-            <b-btn size="sm" @click="notifyParent(row.processInstanceId)">
-                <font-awesome-icon icon="redo" />Retry</b-btn>
-            <b-btn v-if="row.lockExpirationTime !== null" size="sm" class="ml-2" @click="unlockExtTask(row.id)">
-                Unlock
-            </b-btn>
-        </template>
     </v-client-table>
 </div>
 </template>
@@ -27,7 +20,6 @@ export default {
                 "suspended",
                 "workerId",
                 "topicName",
-                "actions"
             ],
             options: {
                 theme: "bootstrap4",
@@ -54,47 +46,6 @@ export default {
                     this.externalTaskJobs = response.data;
                 });
         },
-        retryExtTask(processInstanceId, extId) {
-            var putObj = {
-                retries: 1,
-                processInstanceIds: [processInstanceId],
-                externalTaskIds: [extId]
-            }
-            this.$api().put("/external-task/retries", putObj).then(response => {
-
-                this.$notify({
-                    group: "foo",
-                    title: " Retries setuped",
-                    type: "success"
-                });
-            }).catch(error => {
-                this.$notify({
-                    group: "foo",
-                    title: "Retries NOT setuped",
-                    text: error,
-                    type: "error"
-                });
-            })
-        },
-        unlockExtTask(extId) {
-            this.$api().post(`/external-task/${extId}/unlock`).then(response => {
-                this.$notify({
-                    group: "foo",
-                    title: "Task unlocked",
-                    type: "success"
-                });
-            }).catch(error => {
-                this.$notify({
-                    group: "foo",
-                    title: "Task NOT unlocked",
-                    text: error,
-                    type: "error"
-                });
-            })
-        },
-      notifyParent(processInstanceId) {
-        this.$emit('retryClicked', processInstanceId);
-      }
     },
     mounted() {}
 

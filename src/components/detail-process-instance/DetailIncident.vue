@@ -10,9 +10,6 @@
         : {{item.incidentMessage}}.
         <br>
         <a :href="getStacktraceUrl(item)" target="_black">Stacktrace.</a>
-        <b-btn size="xl" class="ml-2" variant="secondary" @click="retryClicked(item)">
-          <font-awesome-icon icon="redo"/>
-        </b-btn>
       </li>
     </b-alert>
   </div>
@@ -61,43 +58,6 @@ export default {
       return output;
     },
 
-    retryClicked(item) {
-      if (item.incidentType === "failedExternalTask") {
-        this.$emit('retryExternalTask', item.processInstanceId);
-      } else {
-        this.updateSingleJobRetry(item);
-      }
-    },
-    updateSingleJobRetry(item) {
-      this.jobQuerySelected.processInstanceId = [];
-      this.jobQuerySelected.activityId = [];
-      this.jobQuerySelected.processInstanceId = item.processInstanceId;
-      this.jobQuerySelected.activityId = item.activityId;
-      this.$api()
-        .post("/job/retries", {
-          retries: this.retries,
-          jobQuery: this.jobQuerySelected
-        })
-        .then(response => {
-          this.$notify({
-            group: "foo",
-            title: "Incident retryed",
-            text: "Wait retry",
-            type: "success"
-          });
-        })
-        .catch(error => {
-          this.$notify({
-            group: "foo",
-            title: "Something bad happend",
-            text: error,
-            type: "error"
-          });
-        });
-      setTimeout(() => {
-        this.getAllIncidents();
-      }, 500);
-    },
     getStacktraceUrl: function(item) {
       var str = this.$store.state.baseurl;
       var stacktrackeurl =

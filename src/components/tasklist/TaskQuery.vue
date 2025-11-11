@@ -100,7 +100,7 @@
               size="sm"
               variant="outline-primary"
               @click="getTasks"
-            > Complete {{ maxResults ? taskCount : maxResults}} tasks</b-btn>
+            >Search tasks</b-btn>
             <b-btn class="ml-2" size="sm" variant="outline-secondary" @click="clearFilter">Clear</b-btn>
             <b-btn class="ml-2" size="sm" variant="outline-warning" v-b-modal.modal-1>Save as filter</b-btn>
             <b-modal v-on:ok="saveFilter" v-model="showModal" id="modal-1" title="Save filter">
@@ -335,28 +335,6 @@ export default {
       this.createdAfter = item.createdAfter;
       this.createdBefore = item.createdBefore;
       this.getCount();
-    },
-    completeTasks() {
-      var vm = this;
-      this.tasks.forEach(function (obj, index) {
-        setTimeout(function () {
-          var variables = {};
-          vm.$api().post('/task/' + obj.id + '/submit-form', variables).then(() => {
-
-          })
-          vm.currentPossition = index;
-
-          if (index == vm.tasks.length - 1) {
-            vm.$notify({
-              group: "foo",
-              title: "Done",
-              type: "success"
-            });
-          }
-        }, 500 * (index + 1));
-
-      });
-
     },
     loadFiltersLocalStorage() {
       var array = JSON.parse(localStorage.taskFilters);

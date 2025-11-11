@@ -27,12 +27,6 @@
         </datalist>
 
         <b-form-input class="ml-1" v-model="countOfJobs" type="number"></b-form-input>
-        <b-btn class="ml-1" variant="warning" @click="getFistNJobs">Rerun {{countOfJobs}} jobs</b-btn>
-        <b-btn
-          class="ml-1"
-          variant="danger"
-          @click="healAndRetry"
-        >Rerun all activities</b-btn>
       </b-form>
       <div class="d-flex justify-content-end">
         <b-btn size="sm" variant="link" @click="resetFilters">Clear filters</b-btn>
@@ -56,8 +50,6 @@
                         </div>
                       </div>
                     </th>
-                    <th class="table-header">Fix</th>
-                    <th class="table-header">Delete instance</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -80,26 +72,6 @@
                           <b>{{item.processInstanceId}}</b>
                         </p>
                       </router-link>
-                    </td>
-                    <td style="word-break:break-all;">
-                      <b-btn
-                        size="sm"
-                        class="ml-2"
-                        variant="info"
-                        @click="updateSingleJobRetry(item)"
-                      >
-                        <font-awesome-icon icon="redo" />
-                      </b-btn>
-                    </td>
-                    <td style="word-break:break-all;">
-                      <b-btn
-                        size="sm"
-                        class="ml-2"
-                        variant="warning"
-                        @click="DeleteProccessInstance(item)"
-                      >
-                        <font-awesome-icon icon="trash" />
-                      </b-btn>
                     </td>
                   </tr>
                 </tbody>

@@ -19,20 +19,6 @@
                 <b>Assignee</b>
                 <br>
                 {{taskDetails.assignee ? taskDetails.assignee : "" }}
-                <b-button
-                  size="sm"
-                  @click="claimTask"
-                  v-if="taskDetails.assignee == null"
-                  variant="outline-info"
-                >
-                  <font-awesome-icon icon="child"/>Claim to me
-                </b-button>
-                <b-btn
-                  v-if="canTakeTask && taskDetails.assignee != null"
-                  @click="unclaimTask"
-                  size="sm"
-                  variant="outline-secondary"
-                >Unclaim</b-btn>
                 <hr>
                 <b>Created</b>
                 <br>
@@ -230,21 +216,6 @@ export default {
         else this.canTakeTask = false;
       }
       else this.canTakeTask = true;
-    },
-    unclaimTask() {
-      this.$api().post('/task/' + this.taskId + "/unclaim").then(() => {
-        this.getTaskDetails();
-
-      })
-
-    },
-    claimTask() {
-      var userId = {
-        userId: this.profile.userName
-      }
-      this.$api().post('/task/' + this.taskId + "/claim", userId).then(() => { this.getTaskDetails(); })
-
-
     },
     checkCandidateGroup() {
       this.identitylinks.forEach(  identity =>{

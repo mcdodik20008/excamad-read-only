@@ -4,33 +4,11 @@
       <b-row>
         <b-col>
           <h3>
-            <b-btn
-              v-b-tooltip.hover
-              title="Terminate instance"
-              @click="deleteInstance"
-              variant="danger"
-              size="sm"
-            >X</b-btn>
             {{processDetail.id}}
             <router-link
               :to="{name:'definition', params:{ definitionId: definitionDetail.id}, query: {baseurl}}"
             >{{ definitionDetail.key }}({{definitionDetail.version}})</router-link>
           </h3>
-        </b-col>
-        <b-col v-if="processInstanceRuntimeData" col lg="2" class="text-right">
-          <b-btn
-            class="mt-3"
-            v-b-tooltip.hover
-            title="Suspending a process instance means that the execution is stopped, so the token state will not change. However, actions that do not change token state, like setting or removing variables, etc. will still succeed.
-
-Tasks belonging to this process instance will also be suspended. This means that any actions influencing the tasks' lifecycles will fail"
-            @click="suspendCurrentId()"
-            size="sm"
-            :variant="getVariantForSuspend()"
-          >
-            <font-awesome-icon :icon="getIcon()"/>
-            {{getText()}}
-          </b-btn>
         </b-col>
       </b-row>
       <h4 v-if="processHistoryDetail.superProcessInstanceId">Called from
@@ -114,55 +92,6 @@ export default {
         businessKey: this.processHistoryDetail.businessKey ? this.processHistoryDetail.businessKey : this.processInstanceRuntimeData.businessKey
       }
     },
-    deleteInstance() {
-      this.$api()
-        .delete("/process-instance/" + this.processInstanceId)
-        .then(response => {
-          this.$notify({
-            group: "foo",
-            title: "Deleted!",
-            type: "success"
-          });
-        })
-        .catch(error => {
-          this.$notify({
-            group: "foo",
-            title: "Some problem!",
-            text: error.data,
-            type: "error"
-          });
-        });
-    },
-    suspendCurrentId() {
-      this.$api()
-        .put(
-          "/process-instance/" +
-            this.processInstanceRuntimeData.id +
-            "/suspended",
-          {
-            suspended: !this.processInstanceRuntimeData.suspended
-          }
-        )
-        .then(response => {
-          this.$notify({
-            group: "foo",
-            title: this.processInstanceRuntimeData.suspended
-              ? "Unsuspended!"
-              : "Suspended",
-            type: "success"
-          });
-          this.getProcessDetail();
-        })
-        .catch(error => {
-          this.$notify({
-            group: "foo",
-            title: "Some problem!",
-            text: error.data,
-            type: "error"
-          });
-          this.getProcessDetail();
-        });
-    },
     getProcessDetail() {
       this.$api()
         .get("/history/process-instance/" + this.processInstanceId)
@@ -212,21 +141,6 @@ export default {
       ) {
         return "danger";
       }
-    },
-    getVariantForSuspend() {
-      if (this.processInstanceRuntimeData.suspended) {
-        return "warning";
-      } else return "primary";
-    },
-    getIcon() {
-      if (this.processInstanceRuntimeData.suspended) {
-        return "play";
-      } else return "pause";
-    },
-    getText() {
-      if (this.processInstanceRuntimeData.suspended) {
-        return "Unsuspend";
-      } else return "Suspend";
     },
 
     convertDateToHumanStyle: function(date) {

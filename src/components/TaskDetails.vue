@@ -1,15 +1,5 @@
 <template>
   <div id="TaskDetails" v-if="taskId != null">
-    <p class="text-right">
-      <b-button-group size="sm">
-        <b-button disabled variant="outline-info">
-          <font-awesome-icon icon="child"/>Claim
-        </b-button>
-        <b-button @click="generateAndUpdate" :disabled="fieldsOk" variant="outline-success">
-          <font-awesome-icon icon="check"/>Done
-        </b-button>
-      </b-button-group>
-    </p>
     <b-card v-if="ready" bg-variant="light" text-variant="dark">
       <form>
         <vue-form-generator :schema="schema" :model="model" :options="formOptions"></vue-form-generator>

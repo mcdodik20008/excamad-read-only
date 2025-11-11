@@ -9,30 +9,6 @@
       :statistics="statistics"
       v-on:clickedOnDiagram="PassDiagramClick"
     ></diagram>
-    <b-card
-      v-show="hideSuspend != true"
-      class="mt-2"
-      v-if="clickedElement !=null && clickedElement.$type !='bpmn:UserTask'"
-      bg-variant="light"
-      text-variant="dark"
-    >
-      <b-btn
-        size="sm"
-        v-if="clickedElement !=null"
-        :variant="getVariant()"
-        @click="suspendCurrentJobDefinition()"
-      >
-        <font-awesome-icon :icon="getIcon()"/>
-        {{getText()}} {{clickedElement.id}} ({{clickedElement.name}})
-      </b-btn>
-      <b-form-checkbox
-        v-b-tooltip.hover
-        class="ml-3"
-        title="When the value is set to true, all jobs of the job definitions with the given process definition id will be activated or suspended and when the value is set to false, the suspension state of all jobs of the job definitions with the given process definition id will not be updated."
-        size="sm"
-        v-model="includeJobs"
-      >Include current jobs</b-form-checkbox>
-    </b-card>
   </div>
 </template>
 
@@ -78,39 +54,6 @@ export default {
           this.clickedJobDefinition = response.data;
         });
     },
-    suspendCurrentJobDefinition() {
-      this.$api()
-        .put(
-          "/job-definition/" + this.clickedJobDefinition[0].id + "/suspended",
-          {
-            executionDate: null,
-            includeJobs: this.includeJobs,
-            suspended: !this.clickedJobDefinition[0].suspended
-          }
-        )
-        .then(response => {
-          this.$notify({
-            group: "foo",
-            title: this.clickedJobDefinition.suspended
-              ? "Unsuspended!"
-              : "Suspended",
-            type: "success"
-          });
-          this.diagramKey = this.diagramKey + 1;
-          this.getJobs();
-          this.clickedElement = null;
-        })
-        .catch(error => {
-          this.$notify({
-            group: "foo",
-            title: "Some problem!",
-            text: error.data,
-            type: "error"
-          });
-          this.diagramKey = this.diagramKey + 1;
-          this.getJobs();
-        });
-    },
     getJobs() {
       this.$api()
         .post("/job-definition", {
@@ -127,21 +70,6 @@ export default {
             }
           });
         });
-    },
-    getVariant() {
-      if (this.clickedJobDefinition[0].suspended) {
-        return "warning";
-      } else return "primary";
-    },
-    getIcon() {
-      if (this.clickedJobDefinition[0].suspended) {
-        return "play";
-      } else return "pause";
-    },
-    getText() {
-      if (this.clickedJobDefinition[0].suspended) {
-        return "Unsuspend";
-      } else return "Suspend";
     },
     getStatistics() {
       this.$api()

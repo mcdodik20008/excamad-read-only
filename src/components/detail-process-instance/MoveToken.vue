@@ -15,7 +15,6 @@
           <option v-bind:key="item" v-for="item in possibleActivitySimpleArray">{{ item }}</option>
         </datalist>
 
-        <b-button @click="moveToken" variant="outline-danger">Move</b-button>
         <br />
       </b-form>
       <small>{{calculateHelp()}}</small>
@@ -143,43 +142,6 @@ export default {
         });
       });
     },
-    moveToken() {
-      var moveTokenObj = {
-        skipCustomListeners: true,
-        skipIoMappings: this.skipIoMappings,
-        instructions: [
-          {
-            type: "cancel",
-            activityId: this.selectedFrom
-          },
-          {
-            type: "startBeforeActivity",
-            activityId: this.selectedTo
-          }
-        ]
-      };
-      this.$api()
-        .post(
-          "/process-instance/" + this.processInstanceId + "/modification",
-          moveTokenObj
-        )
-        .then(() => {
-          this.$notify({
-            group: "foo",
-            title: " Moved!",
-            text: "token moved",
-            type: "success"
-          });
-        })
-        .catch(error => {
-          this.$notify({
-            group: "foo",
-            title: "Not moved",
-            text: error,
-            type: "error"
-          });
-        });
-    }
   }
 };
 </script>

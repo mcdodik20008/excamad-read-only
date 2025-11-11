@@ -23,12 +23,6 @@
           <i>Total task {{tasks.length}}</i>
         </small>
       </b-card>
-      <b-btn
-        class="mb-2"
-        size="sm"
-        variant="outline-warning"
-        @click="doneAllVisibleTask"
-      >Done first 25</b-btn>
       <b-list-group-item
         :active="checkIsActive(item)"
         @click="changeTaskId(item)"
@@ -193,25 +187,6 @@ export default {
       this.selectedTaskId = item.id;
       this.$store.commit("changeTaskId", this.selectedTaskId);
     },
-    doneAllVisibleTask() {
-      this.$notify({
-        group: "foo",
-        title: "25 task done",
-        type: "success"
-      });
-      var variables = {};
-      var index = 0;
-      var BreakException = {};
-      this.tasks.forEach(it => {
-        this.$api()
-          .post("task/" + it.id + "/submit-form", variables
-          )
-        setTimeout(() => {
-        }, 100);
-        index = index + 1;
-        if (index === 25) throw BreakException;
-      })
-    }
   }
 };
 </script>

@@ -15,27 +15,6 @@
         </b-col>
         <b-col col lg="2">
           <start-definition class="mb-2 text-left" :definitionId="definitionId"></start-definition>
-          <b-btn
-            v-b-tooltip.hover
-
-            title="This process definition will be suspended, so that it will not be possible to start new process instances based on this process definition."
-            @click="suspendCurrentId()"
-            size="sm"
-            class="mb-3"
-            :variant="getVariant()"
-          >
-            <font-awesome-icon :icon="getIcon()"/>
-            {{getText()}}
-          </b-btn>
-
-          <b-form-checkbox
-            v-b-tooltip.hover
-            class="pull-right"
-            title="All existing instance will suspend"
-            size="sm"
-            id="checkbox1"
-            v-model="inculdeCurrentInstance"
-          >Include current instances</b-form-checkbox>
         </b-col>
       </b-row>
       <b-badge
@@ -190,37 +169,6 @@ export default {
         });
     },
 
-    suspendCurrentId() {
-      this.$api()
-        .put(
-          "/process-definition/" + this.definitionMetadata.id + "/suspended",
-          {
-            executionDate: null,
-            includeProcessInstances: this.inculdeCurrentInstance,
-            suspended: !this.definitionMetadata.suspended
-          }
-        )
-        .then(response => {
-          this.$notify({
-            group: "foo",
-            title: this.definitionMetadata.suspended
-              ? "Unsuspended!"
-              : "Suspended",
-            type: "success"
-          });
-          this.getMetadata();
-          this.$emit("suspended");
-        })
-        .catch(error => {
-          this.$notify({
-            group: "foo",
-            title: "Some problem!",
-            text: error.data,
-            type: "error"
-          });
-          this.getMetadata();
-        });
-    },
     convertDateToHumanStyle: function(date) {
       var rel = this.$momenttrue(date)
         .startOf("second")
@@ -231,21 +179,6 @@ export default {
       var output = rel + " (" + cal + ") ";
       return output;
     },
-    getVariant() {
-      if (this.definitionMetadata.suspended) {
-        return "warning";
-      } else return "primary";
-    },
-    getIcon() {
-      if (this.definitionMetadata.suspended) {
-        return "play";
-      } else return "pause";
-    },
-    getText() {
-      if (this.definitionMetadata.suspended) {
-        return "Unsuspend";
-      } else return "Suspend";
-    }
   }
 };
 </script>
