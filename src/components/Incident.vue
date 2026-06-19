@@ -29,6 +29,12 @@
         <b-form-input class="ml-1" v-model="countOfJobs" type="number"></b-form-input>
       </b-form>
       <div class="d-flex justify-content-end">
+        <b-btn
+          size="sm"
+          variant="outline-primary"
+          :disabled="incidentsToShow.length === 0"
+          @click="exportCsv"
+        >Export CSV ({{ incidentsToShow.length }})</b-btn>
         <b-btn size="sm" variant="link" @click="resetFilters">Clear filters</b-btn>
         <b-btn size="sm" variant="link" @click="resetSorting">Clear sorting</b-btn>
       </div>
@@ -95,6 +101,7 @@ import {library} from "@fortawesome/fontawesome-svg-core";
 import {faRedo, faTrash} from "@fortawesome/free-solid-svg-icons";
 import * as api from "@/api/api";
 import {debounce} from "lodash";
+import {exportToCsv} from "@/utils/csv";
 
 library.add(faTrash);
 library.add(faRedo);
@@ -383,6 +390,32 @@ export default {
       return this.$momenttrue(date)
         .startOf("second")
         .fromNow();
+    },
+    exportCsv() {
+      if (this.incidentsToShow.length === 0) {
+        this.notifyInfo("Nothing to export");
+        return;
+      }
+      const columns = [
+        { label: "Failed activity", key: "activityId" },
+        { label: "Error text", key: "incidentMessage" },
+        { label: "Incident type", key: "incidentType" },
+        { label: "Root cause incident", key: "rootCauseIncidentId" },
+        { label: "Cause incident", key: "causeIncidentId" },
+        {
+          label: "Time",
+          value: row =>
+            row.incidentTimestamp
+              ? this.$momenttrue(row.incidentTimestamp).format("YYYY-MM-DD HH:mm:ss")
+              : ""
+        },
+        { label: "Process definition", key: "processDefinitionId" },
+        { label: "Process instance", key: "processInstanceId" },
+        { label: "Incident id", key: "id" }
+      ];
+      const stamp = this.$momenttrue().format("YYYY-MM-DD_HH-mm-ss");
+      exportToCsv(`incidents_${stamp}.csv`, columns, this.incidentsToShow);
+      this.notifySuccess(`Exported ${this.incidentsToShow.length} incidents`);
     },
     retryAllIncidents() {
       this.$api()
