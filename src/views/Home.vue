@@ -4,6 +4,8 @@
       <noConnect v-if="serverStatus != true"></noConnect>
     </div>
 
+    <dashboard-stats v-if="serverStatus == true" class="mt-4"></dashboard-stats>
+
     <b-card-group columns>
       <b-card
         title="Migration"
@@ -85,10 +87,13 @@
 <script>
 // @ is an alias to /src
 import store from "@/store/store";
+import DashboardStats from "@/components/dashboard/DashboardStats.vue";
 
 export default {
   name: "incidentView",
-  components: {},
+  components: {
+    DashboardStats
+  },
   computed: {
     serverStatus() {
       return store.state.serverStatus;
